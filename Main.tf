@@ -146,3 +146,48 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 }
 
+# Create a Route53 hosted zone 
+resource "aws_route53_zone" "tfzone" {
+  name = "www.gvasilopoulos.com"
+  force_destroy = true
+}
+
+# Create record for SSL
+resource "aws_route53_record" "ssl1" {
+  zone_id = aws_route53_zone.tfzone.zone_id
+  name = "_025b38c79fec4976fe17c1742f66cd9c.gvasilopoulos.xyz"
+  type = "CNAME"
+  ttl = "300"
+  records = "_6b0085561405f21bd10f6c8c88a7b067.yzdtlljtvc.acm-validations.aws"
+}
+
+# Create IPv4 and IPv6 records for "gvasilopoulos.xyz"
+resource "aws_route53_record" "A1" {
+  zone_id = aws_route53_zone.tfzone.zone_id
+  name = "gvasilopoulos.xyz"
+  type = "A"
+  records = aws_cloudfront_distribution.s3_distribution.domain_name
+}
+
+resource "aws_route53_record" "AAAA1" {
+  zone_id = aws_route53_zone.tfzone.zone_id
+  name = "gvasilopoulos.xyz"
+  type = "AAAA"
+  records = aws_cloudfront_distribution.s3_distribution.domain_name
+}
+
+# Create IPv4 and IPv6 records for "www.gvasilopoulos.xyz"
+resource "aws_route53_record" "A2" {
+  zone_id = aws_route53_zone.tfzone.zone_id
+  name = "www.gvasilopoulos.xyz"
+  type = "A"
+  records = aws_cloudfront_distribution.s3_distribution.domain_name
+}
+
+resource "aws_route53_record" "AAAA2" {
+  zone_id = aws_route53_zone.tfzone.zone_id
+  name = "www.gvasilopoulos.xyz"
+  type = "AAAA"
+  records = aws_cloudfront_distribution.s3_distribution.domain_name
+}
+
