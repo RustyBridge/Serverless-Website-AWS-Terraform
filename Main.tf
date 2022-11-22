@@ -194,16 +194,22 @@ resource "aws_route53_record" "A1" {
   zone_id = aws_route53_zone.tfzone.zone_id
   name = "gvasilopoulos.xyz"
   type = "A"
-  ttl = 300
-  records = [aws_cloudfront_distribution.s3_distribution.domain_name]
+    alias {
+      name                   = aws_cloudfront_distribution.s3_distribution.domain_name
+      zone_id                = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
+      evaluate_target_health = true
+  }
 }
 
 resource "aws_route53_record" "AAAA1" {
   zone_id = aws_route53_zone.tfzone.zone_id
   name = "gvasilopoulos.xyz"
   type = "AAAA"
-  ttl = 300
-  records = [aws_cloudfront_distribution.s3_distribution.domain_name]
+   alias {
+      name                   = aws_cloudfront_distribution.s3_distribution.domain_name
+      zone_id                = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
+      evaluate_target_health = true
+  }
 }
 
 # Create IPv4 and IPv6 records for "www.gvasilopoulos.xyz"
@@ -211,15 +217,21 @@ resource "aws_route53_record" "A2" {
   zone_id = aws_route53_zone.tfzone.zone_id
   name = "www.gvasilopoulos.xyz"
   type = "A"
-  ttl = 300
-  records = [aws_cloudfront_distribution.s3_distribution.domain_name]
+   alias {
+      name                   = aws_cloudfront_distribution.s3_distribution.domain_name
+      zone_id                = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
+      evaluate_target_health = true
+  }
 }
 
 resource "aws_route53_record" "AAAA2" {
   zone_id = aws_route53_zone.tfzone.zone_id
   name = "www.gvasilopoulos.xyz"
   type = "AAAA"
-  ttl = 300
-  records = [aws_cloudfront_distribution.s3_distribution.domain_name]
+   alias {
+      name                   = aws_cloudfront_distribution.s3_distribution.domain_name
+      zone_id                = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
+      evaluate_target_health = true
+  }
 }
 
