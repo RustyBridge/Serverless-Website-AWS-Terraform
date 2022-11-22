@@ -67,11 +67,13 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig2" {
  }
 }
 # Attach S3 Bucket Policy to Allow Public Read
-resource "aws_s3_bucket_policy" "AllowPublicRead" {
-  bucket = [
-    aws_s3_bucket.b1.id,
-    aws_s3_bucket.b2.id
-  ]
+resource "aws_s3_bucket_policy" "AllowPublicRead1" {
+  bucket = aws_s3_bucket.b1.id
+  policy = data.aws_iam_policy_document.AllowPublicRead.json
+}
+
+resource "aws_s3_bucket_policy" "AllowPublicRead2" {
+  bucket = aws_s3_bucket.b2.id
   policy = data.aws_iam_policy_document.AllowPublicRead.json
 }
 
