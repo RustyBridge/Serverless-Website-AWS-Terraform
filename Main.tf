@@ -27,11 +27,13 @@ resource "aws_s3_bucket" "b2" {
 }
 
 # Create Public-Read ACL for S3 buckets
-resource "aws_s3_bucket_acl" "mybucketacl" {
-  bucket = [
-    "aws_s3_bucket.b1.id",
-    "aws_s3_bucket.b2.id"
-  ]
+resource "aws_s3_bucket_acl" "mybucketacl1" {
+  bucket = aws_s3_bucket.b1.id
+  acl = "public-read"
+}
+
+resource "aws_s3_bucket_acl" "mybucketacl2" {
+  bucket = aws_s3_bucket.b2.id
   acl = "public-read"
 }
 
@@ -43,10 +45,19 @@ resource "aws_kms_key" "bucketkey" {
 
 # Enable server side encryption for buckets
 resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig" {
-  bucket = [
-    aws_s3_bucket.b1.bucket,
-    aws_s3_bucket.b2.bucket
-  ]
+  bucket = aws_s3_bucket.b1.bucket
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.bucketkey.arn
+      sse_algorithm     = "aws:kms"
+  }
+ }
+}
+
+# Enable server side encryption for buckets
+resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig" {
+  bucket = aws_s3_bucket.b2.bucket
 
   rule {
     apply_server_side_encryption_by_default {
@@ -59,7 +70,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig" {
 resource "aws_s3_bucket_policy" "AllowPublicRead" {
   bucket = [
     aws_s3_bucket.b1.id,
-    aws_s3_bucker.b2.id
+    aws_s3_bucket.b2.id
   ]
   policy = data.aws_iam_policy_document.AllowPublicRead.json
 }
