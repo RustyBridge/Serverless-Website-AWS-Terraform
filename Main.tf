@@ -30,7 +30,7 @@ resource "aws_s3_bucket" "b2" {
 resource "aws_s3_bucket_acl" "mybucketacl" {
   bucket = [
     aws_s3_bucket.b1.id,
-    aws_s3_bucker.b2.id
+    aws_s3_bucket.b2.id
   ]
   acl = "public-read"
 }
@@ -45,7 +45,7 @@ resource "aws_kms_key" "bucketkey" {
 resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig" {
   bucket = [
     aws_s3_bucket.b1.bucket,
-    aws_s3_bucker.b2.bucket
+    aws_s3_bucket.b2.bucket
   ]
 
   rule {
@@ -76,9 +76,9 @@ data "aws_iam_policy_document" "AllowPublicRead" {
     }
     resources = [
         aws_s3_bucket.b1.arn,
-        "${aws_s3_bucker.b1.arn}/*",
+        "${aws_s3_bucket.b1.arn}/*",
         aws_s3_bucket.b2.arn,
-        "${aws_s3_bucker.b2.arn}/*"
+        "${aws_s3_bucket.b2.arn}/*"
     ]
   }
 }
@@ -97,7 +97,7 @@ resource "aws_s3_bucket_website_configuration" "mybucketwebconfig2" {
   bucket = aws_s3_bucket.b2.bucket
 
   redirect_all_requests_to {
-    hostname = "gvasilopoulos.xyz"
+    host_name = "gvasilopoulos.xyz"
     protocol = "https"
   }
 }
@@ -153,13 +153,13 @@ resource "aws_route53_zone" "tfzone" {
 }
 
 # Create record for SSL
-resource "aws_route53_record" "ssl1" {
-  zone_id = aws_route53_zone.tfzone.zone_id
-  name = "_025b38c79fec4976fe17c1742f66cd9c.gvasilopoulos.xyz"
-  type = "CNAME"
-  ttl = "300"
-  records = "_6b0085561405f21bd10f6c8c88a7b067.yzdtlljtvc.acm-validations.aws"
-}
+#resource "aws_route53_record" "ssl1" {
+#  zone_id = aws_route53_zone.tfzone.zone_id
+#  name = "_025b38c79fec4976fe17c1742f66cd9c.gvasilopoulos.xyz"
+#  type = "CNAME"
+#  ttl = "300"
+#  records = "_6b0085561405f21bd10f6c8c88a7b067.yzdtlljtvc.acm-validations.aws"
+#}
 
 # Create IPv4 and IPv6 records for "gvasilopoulos.xyz"
 resource "aws_route53_record" "A1" {
