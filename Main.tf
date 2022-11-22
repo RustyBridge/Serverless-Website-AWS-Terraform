@@ -44,7 +44,7 @@ resource "aws_kms_key" "bucketkey" {
 }
 
 # Enable server side encryption for buckets
-resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig" {
+resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig1" {
   bucket = aws_s3_bucket.b1.bucket
 
   rule {
@@ -56,7 +56,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig" {
 }
 
 # Enable server side encryption for buckets
-resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig" {
+resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig2" {
   bucket = aws_s3_bucket.b2.bucket
 
   rule {
