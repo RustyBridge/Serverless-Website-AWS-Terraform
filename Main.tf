@@ -29,8 +29,8 @@ resource "aws_s3_bucket" "b2" {
 # Create Public-Read ACL for S3 buckets
 resource "aws_s3_bucket_acl" "mybucketacl" {
   bucket = [
-    aws_s3_bucket.b1.id,
-    aws_s3_bucket.b2.id
+    "aws_s3_bucket.b1.id",
+    "aws_s3_bucket.b2.id"
   ]
   acl = "public-read"
 }
@@ -69,10 +69,10 @@ data "aws_iam_policy_document" "AllowPublicRead" {
   statement  {
     sid = "AllowPublicRead"
     effect = "Allow"
-    actions = "s3:GetObject"
+    actions = ["s3:GetObject"]
     principals {
         type = "*"
-        identifiers = "*"
+        identifiers = ["*"]
     }
     resources = [
         aws_s3_bucket.b1.arn,
@@ -133,16 +133,10 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
     domain_name = aws_s3_bucket.b1.bucket_regional_domain_name
     origin_id = "tf-s3-website.gvasilopoulos.xyz"
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.s3_distribution.cloudfront_access_identity_path
-    }
   }
   origin {
     domain_name = aws_s3_bucket.b2.bucket_regional_domain_name
     origin_id = "tf-s3-website.www.gvasilopoulos.xyz"
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.s3_distribution.cloudfront_access_identity_path
-    }
   }
 }
 
