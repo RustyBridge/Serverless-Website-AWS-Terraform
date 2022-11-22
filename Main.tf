@@ -69,18 +69,18 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig2" {
 # Attach S3 Bucket Policy to Allow Public Read
 resource "aws_s3_bucket_policy" "AllowPublicRead1" {
   bucket = aws_s3_bucket.b1.id
-  policy = data.aws_iam_policy_document.AllowPublicRead.json
+  policy = data.aws_iam_policy_document.AllowPublicRead1.json
 }
 
 resource "aws_s3_bucket_policy" "AllowPublicRead2" {
   bucket = aws_s3_bucket.b2.id
-  policy = data.aws_iam_policy_document.AllowPublicRead.json
+  policy = data.aws_iam_policy_document.AllowPublicRead2.json
 }
 
 # Create S3 Bucket Policy to Allow Public Read
-data "aws_iam_policy_document" "AllowPublicRead" {
+data "aws_iam_policy_document" "AllowPublicRead1" {
   statement  {
-    sid = "AllowPublicRead"
+    sid = "AllowPublicRead1"
     effect = "Allow"
     actions = ["s3:GetObject"]
     principals {
@@ -88,7 +88,23 @@ data "aws_iam_policy_document" "AllowPublicRead" {
         identifiers = ["*"]
     }
         resources = [
-          "${aws_s3_bucket.b1.arn}/*",
+          "aws_s3_bucket.b1.arn",
+          "${aws_s3_bucket.b1.arn}/*"
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "AllowPublicRead2" {
+  statement  {
+    sid = "AllowPublicRead2"
+    effect = "Allow"
+    actions = ["s3:GetObject"]
+    principals {
+        type = "*"
+        identifiers = ["*"]
+    }
+        resources = [
+          "aws_s3_bucket.b2.arn",
           "${aws_s3_bucket.b2.arn}/*"
     ]
   }
