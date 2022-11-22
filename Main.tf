@@ -88,7 +88,7 @@ data "aws_iam_policy_document" "AllowPublicRead1" {
         identifiers = ["*"]
     }
         resources = [
-          "aws_s3_bucket.b1.arn",
+          "${aws_s3_bucket.b1.arn}",
           "${aws_s3_bucket.b1.arn}/*"
     ]
   }
@@ -104,7 +104,7 @@ data "aws_iam_policy_document" "AllowPublicRead2" {
         identifiers = ["*"]
     }
         resources = [
-          "aws_s3_bucket.b2.arn",
+          "${aws_s3_bucket.b2.arn}",
           "${aws_s3_bucket.b2.arn}/*"
     ]
   }
@@ -194,6 +194,7 @@ resource "aws_route53_record" "A1" {
   zone_id = aws_route53_zone.tfzone.zone_id
   name = "gvasilopoulos.xyz"
   type = "A"
+  ttl = 300
   records = [aws_cloudfront_distribution.s3_distribution.domain_name]
 }
 
@@ -201,6 +202,7 @@ resource "aws_route53_record" "AAAA1" {
   zone_id = aws_route53_zone.tfzone.zone_id
   name = "gvasilopoulos.xyz"
   type = "AAAA"
+  ttl = 300
   records = [aws_cloudfront_distribution.s3_distribution.domain_name]
 }
 
@@ -209,6 +211,7 @@ resource "aws_route53_record" "A2" {
   zone_id = aws_route53_zone.tfzone.zone_id
   name = "www.gvasilopoulos.xyz"
   type = "A"
+  ttl = 300
   records = [aws_cloudfront_distribution.s3_distribution.domain_name]
 }
 
@@ -216,6 +219,7 @@ resource "aws_route53_record" "AAAA2" {
   zone_id = aws_route53_zone.tfzone.zone_id
   name = "www.gvasilopoulos.xyz"
   type = "AAAA"
+  ttl = 300
   records = [aws_cloudfront_distribution.s3_distribution.domain_name]
 }
 
