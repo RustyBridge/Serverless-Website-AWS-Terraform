@@ -87,11 +87,9 @@ data "aws_iam_policy_document" "AllowPublicRead" {
         type = "*"
         identifiers = ["*"]
     }
-    resources = [
-        aws_s3_bucket.b1.arn,
-        "${aws_s3_bucket.b1.arn}/*",
-        aws_s3_bucket.b2.arn,
-        "${aws_s3_bucket.b2.arn}/*"
+        resources = [
+          "${aws_s3_bucket.b1.arn}/*",
+          "${aws_s3_bucket.b2.arn}/*"
     ]
   }
 }
@@ -129,6 +127,13 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     target_origin_id = aws_s3_bucket.b1.bucket
     viewer_protocol_policy = "redirect-to-https"
     compress = true
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
+      }
+    }
   }
 
   restrictions {
