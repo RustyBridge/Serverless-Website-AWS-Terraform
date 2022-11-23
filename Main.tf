@@ -18,6 +18,7 @@ provider "aws" {
 # Create S3 bucket for "www.gvasilopoulos.xyz"
 resource "aws_s3_bucket" "b1" {
   bucket = "www.gvasilopoulos.xyz"
+  force_destroy = true 
 }
 
 # Create Public-Read ACL for S3 bucket
@@ -83,11 +84,12 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   aliases = ["gvasilopoulos.xyz", "www.gvasilopoulos.xyz"]
   price_class = "PriceClass_100"
   is_ipv6_enabled = true
+  depends_on = [aws_s3_bucket.b1]
   
   default_cache_behavior {
     allowed_methods = ["GET", "HEAD"]
     cached_methods = ["GET", "HEAD"]
-    target_origin_id = aws_s3_bucket.b1.bucket
+    target_origin_id = "tf-s3-website.www.gvasilopoulos.xyz"
     viewer_protocol_policy = "redirect-to-https"
     compress = true
     forwarded_values {
@@ -129,7 +131,7 @@ resource "aws_route53_record" "sslrecord" {
   name = "_025b38c79fec4976fe17c1742f66cd9c"
   type = "CNAME"
   ttl = 300
-  records = [ ]
+  records = ["_6b0085561405f21bd10f6c8c88a7b067.yzdtlljtvc.acm-validations.aws."]
 }
 
 
@@ -138,6 +140,7 @@ resource "aws_route53_record" "A1" {
   zone_id = aws_route53_zone.tfzone.zone_id
   name = "gvasilopoulos.xyz"
   type = "A"
+  allow_overwrite = true
     alias {
       name                   = aws_cloudfront_distribution.s3_distribution.domain_name
       zone_id                = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
@@ -149,6 +152,7 @@ resource "aws_route53_record" "AAAA1" {
   zone_id = aws_route53_zone.tfzone.zone_id
   name = "gvasilopoulos.xyz"
   type = "AAAA"
+  allow_overwrite = true
    alias {
       name                   = aws_cloudfront_distribution.s3_distribution.domain_name
       zone_id                = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
@@ -161,6 +165,7 @@ resource "aws_route53_record" "A2" {
   zone_id = aws_route53_zone.tfzone.zone_id
   name = "www.gvasilopoulos.xyz"
   type = "A"
+  allow_overwrite = true
    alias {
       name                   = aws_cloudfront_distribution.s3_distribution.domain_name
       zone_id                = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
@@ -172,6 +177,7 @@ resource "aws_route53_record" "AAAA2" {
   zone_id = aws_route53_zone.tfzone.zone_id
   name = "www.gvasilopoulos.xyz"
   type = "AAAA"
+  allow_overwrite = true
    alias {
       name                   = aws_cloudfront_distribution.s3_distribution.domain_name
       zone_id                = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
