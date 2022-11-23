@@ -15,35 +15,24 @@ provider "aws" {
 
 
 
-
-# Create S3 bucket for "gvasilopoulos.xyz"
-resource "aws_s3_bucket" "b1" {
-  bucket = "tf-s3-website.gvasilopoulos.xyz"
-}
-
 # Create S3 bucket for "www.gvasilopoulos.xyz"
-resource "aws_s3_bucket" "b2" {
-  bucket = "tf-s3-website.www.gvasilopoulos.xyz"
+resource "aws_s3_bucket" "b1" {
+  bucket = "www.gvasilopoulos.xyz"
 }
 
-# Create Public-Read ACL for S3 buckets
+# Create Public-Read ACL for S3 bucket
 resource "aws_s3_bucket_acl" "mybucketacl1" {
   bucket = aws_s3_bucket.b1.id
   acl = "public-read"
 }
 
-resource "aws_s3_bucket_acl" "mybucketacl2" {
-  bucket = aws_s3_bucket.b2.id
-  acl = "public-read"
-}
-
-# Create server side encryption key for buckets
+# Create server side encryption key for bucket
 resource "aws_kms_key" "bucketkey" {
   description = "This key is used to encrypt bucket objects"
   deletion_window_in_days = 10
 }
 
-# Enable server side encryption for buckets
+# Enable server side encryption for bucket
 resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig1" {
   bucket = aws_s3_bucket.b1.bucket
 
@@ -55,26 +44,10 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig1" {
  }
 }
 
-# Enable server side encryption for buckets
-resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig2" {
-  bucket = aws_s3_bucket.b2.bucket
-
-  rule {
-    apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.bucketkey.arn
-      sse_algorithm     = "aws:kms"
-  }
- }
-}
 # Attach S3 Bucket Policy to Allow Public Read
 resource "aws_s3_bucket_policy" "AllowPublicRead1" {
   bucket = aws_s3_bucket.b1.id
   policy = data.aws_iam_policy_document.AllowPublicRead1.json
-}
-
-resource "aws_s3_bucket_policy" "AllowPublicRead2" {
-  bucket = aws_s3_bucket.b2.id
-  policy = data.aws_iam_policy_document.AllowPublicRead2.json
 }
 
 # Create S3 Bucket Policy to Allow Public Read
@@ -94,23 +67,7 @@ data "aws_iam_policy_document" "AllowPublicRead1" {
   }
 }
 
-data "aws_iam_policy_document" "AllowPublicRead2" {
-  statement  {
-    sid = "AllowPublicRead2"
-    effect = "Allow"
-    actions = ["s3:GetObject"]
-    principals {
-        type = "*"
-        identifiers = ["*"]
-    }
-        resources = [
-          "${aws_s3_bucket.b2.arn}",
-          "${aws_s3_bucket.b2.arn}/*"
-    ]
-  }
-}
-
-# Configure "tf-s3-website.gvasilopoulos.xyz" bucket for website hosting
+# Configure "tf-s3-website.www.gvasilopoulos.xyz" bucket for website hosting
 resource "aws_s3_bucket_website_configuration" "mybucketwebconfig1" {
   bucket = aws_s3_bucket.b1.bucket
 
@@ -119,17 +76,7 @@ resource "aws_s3_bucket_website_configuration" "mybucketwebconfig1" {
   }
 }
 
-# Configure "tf-s3-website.www.gvasilopoulos.xyz" bucket to redirect web trafic to "tf-s3-website.gvasilopoulos.xyz"
-resource "aws_s3_bucket_website_configuration" "mybucketwebconfig2" {
-  bucket = aws_s3_bucket.b2.bucket
-
-  redirect_all_requests_to {
-    host_name = "gvasilopoulos.xyz"
-    protocol = "https"
-  }
-}
-
-# Create a Cloudfront Distribution for both buckets-origins
+# Create a Cloudfront Distribution for bucket-origin
 
 resource "aws_cloudfront_distribution" "s3_distribution" {
   enabled = true
@@ -166,19 +113,25 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   
   origin {
     domain_name = aws_s3_bucket.b1.bucket_regional_domain_name
-    origin_id = "tf-s3-website.gvasilopoulos.xyz"
-  }
-  origin {
-    domain_name = aws_s3_bucket.b2.bucket_regional_domain_name
     origin_id = "tf-s3-website.www.gvasilopoulos.xyz"
   }
 }
 
-# Create a Route53 hosted zone 
+# Create a resource to import the Route53 hosted zone 
 resource "aws_route53_zone" "tfzone" {
-  name = "www.gvasilopoulos.xyz"
-  force_destroy = true
+  name = "gvasilopoulos.xyz"
+  force_destroy = false
 }
+
+# Create a resource to import the SSL Certificate CNAME record
+resource "aws_route53_record" "sslrecord" {
+  zone_id = aws_route53_zone.tfzone.zone_id
+  name = "_025b38c79fec4976fe17c1742f66cd9c"
+  type = "CNAME"
+  ttl = 300
+  records = [ ]
+}
+
 
 # Create IPv4 and IPv6 records for "gvasilopoulos.xyz"
 resource "aws_route53_record" "A1" {
