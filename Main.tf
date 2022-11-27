@@ -185,3 +185,113 @@ resource "aws_route53_record" "AAAA2" {
   }
 }
 
+# Create DynamoDB table for visitor counter
+resource "aws_dynamodb_table" "tf_db" {
+  name = "tf-db"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key = "vcounter"
+
+  attribute {
+    name = "vcounter"
+    type = "S"
+  }
+}
+
+# Create DynamoDB table item for visitor counter
+resource "aws_dynamodb_table_item" "view-count" {
+  table_name = aws_dynamodb_table.tf_db.name
+  hash_key = aws_dynamodb_table.tf_db.hash_key
+
+  item = <<ITEM
+  {
+    "vcounter": {"S": "view-count"},
+    "Quantity": {"N": "0"}
+  }
+ITEM
+}
+
+# Create python script that points to the DDB and zip it
+resource "local_file" "vcounter_py" {
+  filename = "vcounter.py"
+  depends_on = [aws_dynamodb_table.tf_db]
+  content = <<-EOF
+import json, boto3
+
+client = boto3.client('dynamodb')
+TableName = '${aws_dynamodb_table.tf_db.id}'
+
+def lambda_handler(event, context):
+    
+    '''
+    data = client.get_item(
+        TableName='${aws_dynamodb_table.tf_db.id}',
+        Key = {
+            'vcounter': {'S': 'view-count'}
+        }
+    )
+    '''
+    
+    #data['Item']['Quantity']['N'] = str(int(data['Item']['Quantity']['N']) + 1)
+    
+    response = client.update_item(
+        TableName='${aws_dynamodb_table.tf_db.id}',
+        Key = {
+            'vcounter': {'S': 'view-count'}
+        },
+        UpdateExpression = 'ADD Quantity :inc',
+        ExpressionAttributeValues = {":inc" : {"N": "1"}},
+        ReturnValues = 'UPDATED_NEW'
+        )
+        
+    value = response['Attributes']['Quantity']['N']
+    
+    return {      
+            'statusCode': 200,
+            'body': value}
+            EOF
+}
+
+data "archive_file" "vcounter" {
+  type = "zip"
+  source_file = "${path.module}/vcounter.py"
+  output_path = "${path.module}/vcounter.zip"
+  depends_on = [local_file.vcounter_py]
+}
+
+# Create Lamda function for visitor counter python script
+resource "aws_lambda_function" "tf_increment_v_counter" {
+  function_name = "tf_increment_v_counter"
+  role = "${aws_iam_role.tf_lamda_role.arn}"
+  description = "Reads the visitor count value from the DB, increments it by 1 and returns the result"
+  filename = "${path.module}/vcounter.zip"
+  handler = "vcounter.lambda_handler"
+  runtime = "python3.9"
+  depends_on = [data.archive_file.vcounter]
+}
+
+# Create IAM Role for Lamda access to DDB, S3
+resource "aws_iam_role" "tf_lamda_role" {
+  name = "tf_lamda_role"
+  description = "grants lamda full access to DynamoDB, S3 and basic exec"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+# Attach the required policies to the role
+resource "aws_iam_role_policy_attachment" "tf_lamda_roles_policies" {
+  role = "${aws_iam_role.tf_lamda_role.name}"
+  count = "${length(var.iam_policy_arn)}"
+  policy_arn = "${var.iam_policy_arn[count.index]}"
+}
