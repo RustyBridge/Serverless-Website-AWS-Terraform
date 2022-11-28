@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "AllowPublicRead1" {
   }
 }
 
-# Configure "tf-s3-website.www.gvasilopoulos.xyz" bucket for website hosting
+# Configure "www.gvasilopoulos.xyz" bucket for website hosting
 resource "aws_s3_bucket_website_configuration" "mybucketwebconfig1" {
   bucket = aws_s3_bucket.b1.bucket
 
@@ -89,7 +89,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   default_cache_behavior {
     allowed_methods = ["GET", "HEAD"]
     cached_methods = ["GET", "HEAD"]
-    target_origin_id = "tf-s3-website.www.gvasilopoulos.xyz"
+    target_origin_id = "www.gvasilopoulos.xyz"
     viewer_protocol_policy = "redirect-to-https"
     compress = true
     forwarded_values {
@@ -115,7 +115,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   
   origin {
     domain_name = aws_s3_bucket.b1.bucket_regional_domain_name
-    origin_id = "tf-s3-website.www.gvasilopoulos.xyz"
+    origin_id = "www.gvasilopoulos.xyz"
   }
 }
 
@@ -295,3 +295,27 @@ resource "aws_iam_role_policy_attachment" "tf_lamda_roles_policies" {
   count = "${length(var.iam_policy_arn)}"
   policy_arn = "${var.iam_policy_arn[count.index]}"
 }
+
+# Create HTTP API
+resource "aws_apigatewayv2_api" "tf_vcounter_api" {
+  name = "tf_vcounter_api"
+  protocol_type = "HTTP"
+  disable_execute_api_endpoint = true
+  target = aws_lambda_function.tf_increment_v_counter.arn
+  cors_configuration {
+    allow_origins = ["*"]
+    allow_methods = ["GET", "POST"]
+    allow_credentials = false
+  }
+}
+
+# Create Permission to allow Lambda invokation from the API
+resource "aws_lambda_permission" "tf_lp" {
+  action = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.tf_increment_v_counter.function_name
+  principal = "apigateway.amazonaws.com"
+  statement_id = "AllowExecutionFromAPIGateway"
+
+  source_arn = "${aws_apigatewayv2_api.tf_vcounter_api.execution_arn}/*/*"
+}
+
