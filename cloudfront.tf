@@ -35,7 +35,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
   
   origin {
-    domain_name = "${aws_aws_s3_bucket.b1.bucket}.s3-website-us-east-1.amazon.com"
+    domain_name = aws_s3_bucket.b1.bucket_regional_domain_name
     origin_id = "gvasilopoulos.xyz"
   }
 }

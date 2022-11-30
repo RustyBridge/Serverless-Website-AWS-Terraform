@@ -1,6 +1,6 @@
 # Create S3 bucket for "gvasilopoulos.xyz"
 resource "aws_s3_bucket" "b1" {
-  bucket = "www.gvasilopoulos.xyz"
+  bucket = "gvasilopoulos.xyz"
   force_destroy = true 
 }
 
