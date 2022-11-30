@@ -114,7 +114,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
   
   origin {
-    domain_name = aws_s3_bucket.b1.bucket_regional_domain_name
+    domain_name = "${aws_aws_s3_bucket.b1.bucket}.s3-website-us-east-1.amazon.com"
     origin_id = "www.gvasilopoulos.xyz"
   }
 }
@@ -182,6 +182,31 @@ resource "aws_route53_record" "AAAA2" {
       name                   = aws_cloudfront_distribution.s3_distribution.domain_name
       zone_id                = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
       evaluate_target_health = true
+  }
+}
+
+# Create IPv4 and IPv6 records for API Gateway Custom Domain name
+resource "aws_route53_record" "A3" {
+  zone_id = aws_route53_zone.tfzone.zone_id
+  name = "www.gvasilopoulos.xyz"
+  type = "A"
+  allow_overwrite = true
+   alias {
+      name                   = aws_apigatewayv2_domain_name.tf_api_dn.domain_name_configuration[0].target_domain_name
+      zone_id                = aws_apigatewayv2_domain_name.tf_api_dn.domain_name_configuration[0].hosted_zone_id
+      evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "AAAA3" {
+  zone_id = aws_route53_zone.tfzone.zone_id
+  name = "www.gvasilopoulos.xyz"
+  type = "AAAA"
+  allow_overwrite = true
+   alias {
+      name                   = aws_apigatewayv2_domain_name.tf_api_dn.domain_name_configuration[0].target_domain_name
+      zone_id                = aws_apigatewayv2_domain_name.tf_api_dn.domain_name_configuration[0].hosted_zone_id
+      evaluate_target_health = false
   }
 }
 
@@ -309,6 +334,16 @@ resource "aws_apigatewayv2_api" "tf_vcounter_api" {
   }
 }
 
+# Create and associate custom domain name with HTTP API
+resource "aws_apigatewayv2_domain_name" "tf_api_dn" {
+  domain_name = "api.gvasilopoulos.xyz"
+  domain_name_configuration {
+    certificate_arn = "arn:aws:acm:us-east-1:786880879176:certificate/bdab6c9b-29a3-453f-bab2-021e2b292c92"
+    endpoint_type = "REGIONAL"
+    security_policy = "TLS_1_2"
+  }
+}
+
 # Create Permission to allow Lambda invokation from the API
 resource "aws_lambda_permission" "tf_lp" {
   action = "lambda:InvokeFunction"
@@ -319,3 +354,11 @@ resource "aws_lambda_permission" "tf_lp" {
   source_arn = "${aws_apigatewayv2_api.tf_vcounter_api.execution_arn}/*/*"
 }
 
+# Create a mapping for the API to the Custom Domain Name
+resource "aws_apigatewayv2_api_mapping" "tf_api_map" {
+  api_id = aws_apigatewayv2_api.tf_vcounter_api.id
+  domain_name = aws_apigatewayv2_domain_name.tf_api_dn.id
+  stage = "${aws_apigatewayv2_api.tf_vcounter_api.api_endpoint}/default"
+  
+  depends_on = [aws_apigatewayv2_api.tf_vcounter_api]
+}
