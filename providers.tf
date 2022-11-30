@@ -1,4 +1,4 @@
-# Configure the AWS Provider
+# Configure the Providers
 provider "aws" {
   region                  = var.profile_d[0].region
   shared_credentials_files = [var.p_credentials[0]]
