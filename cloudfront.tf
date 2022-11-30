@@ -10,7 +10,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   default_cache_behavior {
     allowed_methods = ["GET", "HEAD"]
     cached_methods = ["GET", "HEAD"]
-    target_origin_id = "www.gvasilopoulos.xyz"
+    target_origin_id = "gvasilopoulos.xyz"
     viewer_protocol_policy = "redirect-to-https"
     compress = true
     forwarded_values {
@@ -36,6 +36,6 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   
   origin {
     domain_name = "${aws_aws_s3_bucket.b1.bucket}.s3-website-us-east-1.amazon.com"
-    origin_id = "www.gvasilopoulos.xyz"
+    origin_id = "gvasilopoulos.xyz"
   }
 }

@@ -1,4 +1,4 @@
-# Create S3 bucket for "www.gvasilopoulos.xyz"
+# Create S3 bucket for "gvasilopoulos.xyz"
 resource "aws_s3_bucket" "b1" {
   bucket = "www.gvasilopoulos.xyz"
   force_destroy = true 
@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "AllowPublicRead1" {
   }
 }
 
-# Configure "www.gvasilopoulos.xyz" bucket for website hosting
+# Configure "gvasilopoulos.xyz" bucket for website hosting
 resource "aws_s3_bucket_website_configuration" "mybucketwebconfig1" {
   bucket = aws_s3_bucket.b1.bucket
 
