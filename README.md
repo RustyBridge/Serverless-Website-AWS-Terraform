@@ -8,7 +8,7 @@ A project where I aimed to host my Resume at https://gvasilopoulos.xyz, using AW
 
 
 ### **Description:**
-1.	The build was created by the talented Frontend developer @Nick Vasilopoulos, using React, contains a visitor counter written in JavaScript and the static website is hosted on S3
+1.	The build was created by my brother and talented Frontend developer @Nick Vasilopoulos, using React, contains a visitor counter written in JavaScript and the static website is hosted on S3
 2.	A domain name was registered and Route53 is used to manage its DNS records.
 3.	Cloudfront is used to Distribute the website
 4.	The JS Counter calls an API (API Gateway + Custom domain name), which in turn triggers a Lambda function which runs a Python script. The script reads the value for the visitor count, from a DynamoDB table, increments the value by 1 and returns the new value to be displayed on the website.
