@@ -1,6 +1,6 @@
 ## **Serverless Website on AWS using Terraform**
 
-A project where I aimed to host my Resume at https://gvasilopoulos.xyz, using AWS services provisioned with Terraform. The inspiration came from The Cloud Resume Challenge (https://cloudresumechallenge.dev/docs/the-challenge/aws/)
+A project where I aimed to host my Resume at https://gvasilopoulos.xyz, using AWS services, provisioned with Terraform. The inspiration came from The Cloud Resume Challenge (https://cloudresumechallenge.dev/docs/the-challenge/aws/)
 
 ### **Architecture diagram:**
 
