@@ -77,15 +77,3 @@ resource "aws_route53_record" "A3" {
       evaluate_target_health = false
   }
 }
-
-resource "aws_route53_record" "AAAA3" {
-  zone_id = aws_route53_zone.tfzone.zone_id
-  name = "api.gvasilopoulos.xyz"
-  type = "AAAA"
-  allow_overwrite = true
-   alias {
-      name                   = aws_apigatewayv2_domain_name.tf_api_dn.domain_name_configuration[0].target_domain_name
-      zone_id                = aws_apigatewayv2_domain_name.tf_api_dn.domain_name_configuration[0].hosted_zone_id
-      evaluate_target_health = false
-  }
-}

@@ -5,15 +5,6 @@ TableName = 'tf-db'
 
 def lambda_handler(event, context):
     
-    '''
-    data = client.get_item(
-        TableName='tf-db',
-        Key = {
-            'vcounter': {'S': 'view-count'}
-        }
-    )
-    '''
-    
     #data['Item']['Quantity']['N'] = str(int(data['Item']['Quantity']['N']) + 1)
     
     response = client.update_item(

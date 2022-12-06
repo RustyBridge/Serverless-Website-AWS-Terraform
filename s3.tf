@@ -10,20 +10,13 @@ resource "aws_s3_bucket_acl" "mybucketacl1" {
   acl = "public-read"
 }
 
-# Create server side encryption key for bucket
-resource "aws_kms_key" "bucketkey" {
-  description = "This key is used to encrypt bucket objects"
-  deletion_window_in_days = 10
-}
-
 # Enable server side encryption for bucket
 resource "aws_s3_bucket_server_side_encryption_configuration" "myencconfig1" {
   bucket = aws_s3_bucket.b1.bucket
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.bucketkey.arn
-      sse_algorithm     = "aws:kms"
+      sse_algorithm     = "AES256"
   }
  }
 }
