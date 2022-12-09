@@ -5,7 +5,7 @@ resource "aws_apigatewayv2_api" "tf_vcounter_api1" {
   disable_execute_api_endpoint = true
   target = aws_lambda_function.tf_read_v_counter.arn
   cors_configuration {
-    allow_origins = ["*"]
+    allow_origins = ["https://gvasilopoulos.xyz"]
     allow_methods = ["GET", "POST"]
     allow_credentials = false
   }
@@ -18,7 +18,7 @@ resource "aws_apigatewayv2_api" "tf_vcounter_api2" {
   disable_execute_api_endpoint = true
   target = aws_lambda_function.tf_increment_v_counter.arn
   cors_configuration {
-    allow_origins = ["*"]
+    allow_origins = ["https://gvasilopoulos.xyz"]
     allow_methods = ["GET", "POST"]
     allow_credentials = false
   }
