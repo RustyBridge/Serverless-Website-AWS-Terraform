@@ -5,10 +5,6 @@ variable "profile_d" {
   #default = [{region = "us-east-1", name = "profile_name"}]
 }
 
-variable "bucket_names" {
-  description = "Names of the buckets"
-}
-
 variable "iam_policy_arn" {
   description = "IAM policies to be attached to role for lamda"
   type = list(string)
