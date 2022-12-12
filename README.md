@@ -4,7 +4,7 @@ A project where I aimed to host my Resume at https://gvasilopoulos.xyz, using AW
 
 ### **Architecture diagram:**
 
-![Diagram drawio (1)](https://user-images.githubusercontent.com/68524920/206279915-b26c9d0b-2d96-4bac-9da2-e6310c107ca1.png)
+![Architecture_Github](https://user-images.githubusercontent.com/68524920/207152198-6d946b12-5028-4fde-ad6e-ebc6d77a329c.png)
 
 ### **Description:**
 1.	The frontend was created using React, it contains a visitor counter written in JavaScript and the static website is hosted on S3
