@@ -18,7 +18,7 @@ C. Source Code Management: Git\
     branch: */main
 
 D. Build Triggers: Poll SCM\
-    Schedule: H/5 * * * *\
+    Schedule: H/5 * * * *
 
 E. Delete workspace before build starts
 
