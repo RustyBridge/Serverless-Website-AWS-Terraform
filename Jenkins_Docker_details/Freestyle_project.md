@@ -13,7 +13,7 @@ A. Github project: https://github.com/RustyBridge/georgeresume/
 B. Restrict where this project can be run: Docker_Cloud_Agent_name
 
 C. Source Code Management: Git\
-    Repo URL: https://github.com/RustyBridge/georgeresume/\
+    Repo URL: https://github.com/RustyBridge/georgeresume/ \
     Credentials: GitHub Token\
     branch: */main
 
