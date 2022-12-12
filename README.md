@@ -15,7 +15,7 @@ A project where I aimed to host my Resume at https://gvasilopoulos.xyz, using AW
 6.	The Javascript function:\
 a) Checks the local storage for the value and if it doesn’t exist it, calls API2, which invokes the Lambda responsible for incrementing the DB value, saves it to local storage and displays it.\
 b) If the value already exists in local storage (the website has already been visited) calls API1 which invokes the Lambda responsible for reading the updated value from the DB, saves it to the local storage and displays it. 
-7. A CD Pipeline was created using Jenkins and Docker to automate build deployments when changes are pushed to the repository. The details are described here: https://github.com/RustyBridge/Serverless-Website-AWS-Terraform/blob/2ea42ae0626090dd5f909dca42b437f257c64c01/Jenkins_Docker_details/Freestyle_project.md 
+7. A CD Pipeline was created for the frontend, using Jenkins and Docker, which builds the React app and copies the contents of the build folder to the S3 bucket, when changes are pushed to that private repository. The details are described here: https://github.com/RustyBridge/Serverless-Website-AWS-Terraform/blob/2ea42ae0626090dd5f909dca42b437f257c64c01/Jenkins_Docker_details/Freestyle_project.md 
 
 ### **Disclaimer:**
  1.	The Frontend was not created by me. All credits go to my brother and talented developer, Nick Vasilopoulos (https://www.linkedin.com/in/nickvasilopoulos/)
