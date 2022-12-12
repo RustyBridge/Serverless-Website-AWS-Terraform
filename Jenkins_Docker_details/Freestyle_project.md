@@ -28,8 +28,9 @@ F. Use secret texts:\
     NPM_TOKEN
 
 G. Build Steps:
-```
-    Execute shell:[
+
+    Execute shell:\
+    ```
         echo "STEP 3: NPM build"
         echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc;
         npm init --yes;
@@ -37,10 +38,10 @@ G. Build Steps:
         rm package-lock.json;
         npm install;
         CI=false npm run build;  
-    ]
-```
-```
-    Ececute shell:[
+    ```
+
+    Ececute shell:\
+    ```
         echo "STEP 3: AWS copy build to S3"
         ln -s /usr/local/bin/aws/aws /usr/bin/aws
         aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID};
@@ -48,6 +49,5 @@ G. Build Steps:
         aws configure set default.region us-east-1;
         aws s3 rm --recursive s3://gvasilopoulos.xyz;
         aws s3 sync /home/jenkins/workspace/my-test-s3-upload-poject/build/ s3://gvasilopoulos.xyz/;
-    ]
-```
+    ```
 ## 5. Pushed a new commit to the repository, the app was built and the contents of the build folder were uploaded to S3.
