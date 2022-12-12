@@ -26,12 +26,12 @@ Schedule: H/5 * * * *
 
 ### E. Delete workspace before build starts
 
-### F. Use secret texts:\
+### F. Use secret texts:
 AWS_ACCESS_KEY_ID\
 AWS_SECRET_ACCESS_KEY\
 NPM_TOKEN
 
-### G. Build Steps:\
+### G. Build Steps:
 Execute shell:
 ```
         echo "STEP 3: NPM build"
